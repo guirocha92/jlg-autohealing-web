@@ -1,0 +1,21 @@
+# Downloaded Terraform providers and modules
+.terraform/
+
+# Local state, state backups and state lock information
+*.tfstate
+*.tfstate.*
+.terraform.tfstate.lock.info
+
+# Saved binary deployment plans
+*.tfplan
+tfplan
+
+# Local variable values; use .tfvars.example for a shareable template
+*.tfvars
+*.tfvars.json
+
+# Terraform crash logs
+crash.log
+crash.*.log
+
+# Keep .terraform.lock.hcl in Git: it records provider selections and checksums.
