@@ -156,6 +156,12 @@ $LASTEXITCODE
 
 Exit code `0` means no changes were detected. Exit code `2` means Terraform detected changes, while exit code `1` indicates an error.
 
+## Continuous integration
+
+The GitHub Actions workflow in `.github/workflows/terraform.yml` runs when code is pushed to `main`, when a pull request targets `main`, or when it is started manually.
+
+The workflow checks Terraform formatting, initialises the providers without configuring a state backend, and validates the configuration. It does not run `terraform plan` or `terraform apply`, so it does not require Azure credentials and cannot create or change Azure resources.
+
 ## Test one instance failure
 
 Run the following request loop in a separate PowerShell terminal. Stop it with `Ctrl+C` after testing is complete.
