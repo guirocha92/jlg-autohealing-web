@@ -1,0 +1,33 @@
+#cloud-config
+package_update: true
+
+packages:
+  - nginx
+
+write_files:
+  - path: /usr/local/bin/render-web-page.sh
+    owner: root:root
+    permissions: "0755"
+    content: |
+      #!/usr/bin/env bash
+      set -euo pipefail
+
+      server_hostname="$(hostname)"
+
+      cat > /var/www/html/index.html <<EOF
+      <!doctype html>
+      <html lang="en">
+      <head>
+        <meta charset="utf-8">
+        <title>JLG Auto-Healing Web Tier</title>
+      </head>
+      <body>
+        <h1>JLG Auto-Healing Web Tier</h1>
+        <p>Served by ${server_hostname}</p>
+      </body>
+      </html>
+      EOF
+
+runcmd:
+  - [/usr/local/bin/render-web-page.sh]
+  - [systemctl, enable, --now, nginx]
