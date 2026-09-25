@@ -15,3 +15,9 @@ variable "location" {
   description = "Azure region for the lab."
   default     = "australiaeast"
 }
+
+variable "public_ip_zones" {
+  description = "Availability zones for the load balancer public IP."
+  type        = list(string)
+  default     = ["1", "2", "3"]
+}

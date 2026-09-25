@@ -5,4 +5,6 @@ module "load_balancer" {
   resource_group_name = azurerm_resource_group.web.name
   location            = azurerm_resource_group.web.location
   tags                = azurerm_resource_group.web.tags
+
+  public_ip_zones = var.public_ip_zones
 }

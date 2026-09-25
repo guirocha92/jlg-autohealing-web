@@ -18,3 +18,8 @@ variable "tags" {
   description = "Tags applied to resources that support them."
   default     = {}
 }
+
+variable "public_ip_zones" {
+  description = "Availability zones for the load balancer public IP."
+  type        = list(string)
+}
