@@ -19,3 +19,15 @@ crash.log
 crash.*.log
 
 # Keep .terraform.lock.hcl in Git: it records provider selections and checksums.
+
+# Private SSH keys and certificates; public keys may be committed
+keys/*
+!keys/*.pub
+*.pem
+*.pfx
+*.key
+*.ppk
+id_rsa
+id_ed25519
+*_rsa
+*_ed25519
