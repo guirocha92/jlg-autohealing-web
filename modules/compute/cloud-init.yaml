@@ -19,11 +19,178 @@ write_files:
       <html lang="en">
       <head>
         <meta charset="utf-8">
-        <title>JLG Auto-Healing Web Tier</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Azure Auto-Healing Web Tier</title>
+        <style>
+          :root {
+            color-scheme: dark;
+            font-family: Inter, "Segoe UI", Arial, sans-serif;
+          }
+
+          * {
+            box-sizing: border-box;
+          }
+
+          body {
+            min-height: 100vh;
+            margin: 0;
+            display: grid;
+            place-items: center;
+            padding: 32px;
+            color: #e8eef8;
+            background:
+              radial-gradient(circle at top left, #174f78 0, transparent 38%),
+              linear-gradient(135deg, #071521, #0c2437);
+          }
+
+          main {
+            width: min(900px, 100%);
+            padding: 48px;
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            border-radius: 24px;
+            background: rgba(7, 21, 33, 0.88);
+            box-shadow: 0 24px 70px rgba(0, 0, 0, 0.35);
+          }
+
+          .eyebrow {
+            margin: 0 0 12px;
+            color: #67c8ff;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+          }
+
+          h1 {
+            margin: 0;
+            font-size: clamp(2.2rem, 6vw, 4.4rem);
+            line-height: 1;
+          }
+
+          .lead {
+            max-width: 720px;
+            margin: 24px 0;
+            color: #b9c8d8;
+            font-size: 1.1rem;
+            line-height: 1.7;
+          }
+
+          .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 28px;
+            padding: 10px 14px;
+            border: 1px solid rgba(75, 224, 144, 0.35);
+            border-radius: 999px;
+            color: #a6f4c5;
+            background: rgba(24, 128, 78, 0.16);
+          }
+
+          .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #4be090;
+            box-shadow: 0 0 16px #4be090;
+          }
+
+          .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+          }
+
+          .card {
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.05);
+          }
+
+          .card strong {
+            display: block;
+            margin-bottom: 8px;
+            color: #67c8ff;
+            font-size: 1.35rem;
+          }
+
+          .card span {
+            color: #b9c8d8;
+            line-height: 1.5;
+          }
+
+          .route {
+            margin-top: 24px;
+            padding: 18px;
+            border-radius: 14px;
+            color: #d7e8f7;
+            background: #06111b;
+            font-family: Consolas, "Courier New", monospace;
+            line-height: 1.7;
+          }
+
+          .server {
+            margin: 24px 0 8px;
+            color: #ffffff;
+            font-size: 1.1rem;
+            font-weight: 700;
+          }
+
+          .hint {
+            margin: 0;
+            color: #8fa5b8;
+          }
+
+          footer {
+            margin-top: 32px;
+            padding-top: 22px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #8fa5b8;
+          }
+
+          a {
+            color: #67c8ff;
+          }
+
+          @media (max-width: 700px) {
+            main {
+              padding: 30px 22px;
+            }
+
+            .grid {
+              grid-template-columns: 1fr;
+            }
+          }
+        </style>
       </head>
       <body>
-        <h1>JLG Auto-Healing Web Tier</h1>
-        <p>Served by ${server_hostname}</p>
+        <main>
+          <p class="eyebrow">Terraform on Microsoft Azure</p>
+          <h1>Azure Auto-Healing Web Tier</h1>
+
+          <p class="lead">
+            Infrastructure-as-code technical assessment for Global 360.
+            The website runs on private Linux VM Scale Set instances behind an
+            Azure Standard Load Balancer.
+          </p>
+
+          <div class="route">
+            Visitor &rarr; Public IP &rarr; Load Balancer &rarr; VMSS &rarr; NGINX
+          </div>
+
+          <p class="server">Served by ${server_hostname}</p>
+          <p class="hint">
+            Refresh the page to observe requests moving between backend instances.
+          </p>
+
+          <footer>
+            Built by Guilherme Rocha |
+            <a href="https://github.com/guirocha92/jlg-autohealing-web"
+               target="_blank"
+               rel="noopener noreferrer">View the Terraform source</a>
+          </footer>
+        </main>
       </body>
       </html>
       EOF
