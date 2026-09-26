@@ -252,6 +252,7 @@ az vmss run-command invoke `
     --command-id RunShellScript `
     --scripts "sudo systemctl stop nginx"
 ```
+Detailed deployment and failure-test results are available in [Runtime validation](docs/runtime-validation.md).
 
 The HTTP probe should remove the unhealthy instance from load-balancer traffic. After the configured grace period, automatic instance repair replaces it and cloud-init installs NGINX on the replacement.
 
