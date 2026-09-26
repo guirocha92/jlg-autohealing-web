@@ -20,24 +20,26 @@ Australia East was selected because the required Basv2 VM quota, SKU and availab
 flowchart TB
     Visitor["Website visitor"] --> IP["Standard public IP"]
     IP --> LB["Azure Standard Load Balancer"]
+    LB --> Pool["Load-balancer backend pool"]
 
     subgraph Network["Azure virtual network"]
-        NSG["Network security group: HTTP port 80"]
+        NSG["NSG allows HTTP and health probes"]
 
-        subgraph VMSS["Linux Virtual Machine Scale Set"]
-            VM1["NGINX instance: Zone 1"]
-            VM2["NGINX instance: Zone 3"]
+        subgraph VMSS["Linux VMSS - eligible zones 1 and 3"]
+            VM1["NGINX instance"]
+            VM2["NGINX instance"]
         end
 
-        NSG --> VM1
-        NSG --> VM2
+        NSG -. "protects subnet" .-> VM1
+        NSG -. "protects subnet" .-> VM2
     end
 
-    LB --> VM1
-    LB --> VM2
+    Pool --> VM1
+    Pool --> VM2
 
     Probe["HTTP health probe: GET /"] -.-> VM1
     Probe -.-> VM2
+
     CloudInit["cloud-init installs and configures NGINX"] -.-> VM1
     CloudInit -.-> VM2
 ```
@@ -48,19 +50,21 @@ The load balancer checks `http://<instance>/` on port 80. If NGINX stops returni
 
 A fixed autoscale profile keeps the minimum, default and maximum capacity at two instances. If an instance is deliberately deleted, Azure restores the scale set to two instances. Every new instance runs the same cloud-init configuration, installs NGINX and joins the existing load-balancer backend pool automatically.
 
+Zones 1 and 3 are configured as eligible placement zones. Strict zone balancing is disabled so Azure can prioritise restoring the scale set to two instances if one zone temporarily cannot accept a replacement.
+
 ## Requirements coverage
 
-| Requirement               | Implementation                                                                                                                                                                    |
-| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Self-healing              | The load balancer probe detects an unhealthy web service. VM Scale Set automatic repair uses the probe result and replaces the unhealthy instance.                                |
-| Deleted-instance recovery | An Azure Monitor autoscale profile enforces a minimum capacity of two and restores the count if an instance is deleted.                                                           |
-| Self-provisioning         | Terraform creates the resource group, network, security rules, load balancer, VM Scale Set, autoscale configuration and NGINX setup. No manual resource creation is required.     |
-| Idempotency               | Terraform manages the desired state. After deployment, a second plan should report no infrastructure changes.                                                                     |
-| N + 1 capacity            | The scale set maintains two instances behind the load balancer. Each instance is sized to support the complete assumed static-site workload while the other instance is replaced. |
-| Static website            | cloud-init installs NGINX and writes the web page whenever Azure creates an instance.                                                                                             |
-| Naming and tagging        | Resources follow a consistent type-project-environment naming pattern and share the Project, Environment and ManagedBy tags.                                                      |
+| Requirement | Implementation |
+| --- | --- |
+| Self-healing | The load balancer probe detects an unhealthy web service. VM Scale Set automatic repair uses the probe result and replaces the unhealthy instance. |
+| Deleted-instance recovery | An Azure Monitor autoscale profile enforces a minimum capacity of two and restores the count if an instance is deleted. |
+| Self-provisioning | Terraform creates the resource group, network, security rules, load balancer, VM Scale Set, autoscale configuration and NGINX setup. No manual resource creation is required. |
+| Idempotency | Terraform manages the desired state. After deployment, a second plan should report no infrastructure changes. |
+| N + 1 capacity | The scale set maintains two instances behind the load balancer. Each instance is sized to support the complete assumed static-site workload while the other instance is replaced. |
+| Static website | cloud-init installs NGINX and writes the web page whenever Azure creates an instance. |
+| Naming and tagging | Resources follow a consistent type-project-environment naming pattern and share the Project, Environment and ManagedBy tags. |
 
-## Pre-requisites
+## Prerequisites
 
 The following tools and access are required:
 
@@ -292,3 +296,14 @@ Prices were checked in Australian dollars on 25 September 2026. Azure prices and
 - [Azure free services](https://azure.microsoft.com/en-au/pricing/free-services/)
 - [Azure Retail Prices API](https://learn.microsoft.com/en-us/rest/api/cost-management/retail-prices/azure-retail-prices)
 - [Azure public IP address pricing](https://azure.microsoft.com/en-au/pricing/details/ip-addresses/)
+
+The temporary USD 200 Azure credit is not deducted from this estimate because it does not represent an ongoing monthly saving.
+## Destroy the lab
+
+Remove the Azure resources when testing is complete to avoid further charges:
+
+```powershell
+terraform destroy
+```
+
+Review the proposed deletions and confirm when prompted.

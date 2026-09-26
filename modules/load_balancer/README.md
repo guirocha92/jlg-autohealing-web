@@ -7,7 +7,7 @@ web tier.
 
 - A static Standard public IP address.
 - A Standard Azure Load Balancer using that public IP as its frontend.
-- A backend pool for the future web scale-set instances.
+- A backend pool for the web VM Scale Set instances.
 - An HTTP health probe for `/` on port 80.
 - A rule that sends frontend TCP port 80 to backend TCP port 80.
 - An outbound rule that gives backend instances controlled Internet access.
@@ -37,10 +37,9 @@ public IP addresses.
 | `resource_group_name` | Resource group to use | Required |
 | `location` | Azure region | Required |
 | `tags` | Tags for supported resources | `{}` |
+| `public_ip_zones` | Availability zones used by the public IP | Required |
 
-The `backend_address_pool_id` output will connect the future VM Scale Set to
-the load balancer. The `public_ip_address` output exposes the address that a
-visitor can use after deployment.
+The `backend_address_pool_id` output connects the VM Scale Set instances to the load balancer. The `health_probe_id` output allows VM Scale Set automatic repair to use the probe results, while `public_ip_address` exposes the address used by website visitors.
 
 ## Run from the project root
 
@@ -51,8 +50,7 @@ terraform validate
 terraform plan
 ```
 
-The backend pool is intentionally empty at this stage. The compute module will
-add every scale-set instance to it in the next stage.
+The root compute module attaches every VM Scale Set instance to the backend pool. New and replacement instances join the same pool automatically.
 
 ## References
 
