@@ -53,6 +53,20 @@ Both failure tests demonstrated that Azure restored the required capacity automa
 
 The aggressive two-second request loop recorded one transient failed connection during each forced disruption. Therefore, the test demonstrates automatic recovery and continued service without a sustained outage, but it does not claim that every in-flight request was preserved.
 
+## Custom page rollout
+
+The cloud-init configuration was updated with a customised NGINX status page. Terraform updated the VM Scale Set model in place without creating or destroying any Azure resources.
+
+After the update, both existing instances reported that the latest VMSS model had been applied. Twelve requests were then sent through the public load balancer:
+
+- Six requests were served by instance 2.
+- Six requests were served by instance 3.
+- Every response contained the customised Azure Auto-Healing Web Tier page.
+
+This confirmed that the updated page was available from both backend instances and that load balancing continued to operate correctly.
+
+
+
 ## Final Terraform check
 
 After both Azure-managed replacements completed, Terraform was run again with `-detailed-exitcode`. It reported:
